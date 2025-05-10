@@ -16,7 +16,7 @@ const verifyEmployerToken = (req, res, next) => {
     req.employer = decoded; // Attach employer data to request
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token." });
+    return res.status(401).json({ message: "Logput! Invalid or expired token." });
   }
 };
 
