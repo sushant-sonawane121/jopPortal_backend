@@ -111,15 +111,42 @@ const applyToJob = async (req, res) => {
     }
 
     // Add job application
-    jobSeeker.appliedJobs.push({ jobId, employerId,  status: "Pending" });
+    jobSeeker.appliedJobs.push({ jobId, employerId, status: "Pending" });
     await jobSeeker.save();
 
-    res.status(200).json({ message: "Job application submitted successfully." });
+    res
+      .status(200)
+      .json({ message: "Job application submitted successfully." });
   } catch (error) {
     console.error("Error applying for job:", error);
     res.status(500).json({ message: "Server error while applying for job." });
   }
 };
 
+const getAppliedJobs = async (req, res) => {
+  try {
+    const { userId } = req.body;
 
-module.exports = { registerJobSeeker, loginJobSeeker, applyToJob };
+    const jobSeeker = await JobSeeker.findById(userId)
+      // console.log(jobSeeker.appliedJobs[0].jobId);
+
+    if (!jobSeeker) {
+      return res.status(404).json({ message: "Job seeker not found" });
+    }
+
+  
+    console.log(jobSeeker.appliedJobs);
+    res.status(200).json(jobSeeker.appliedJobs);
+  } catch (err) {
+    console.error("Error fetching applied jobs:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}; 
+
+
+module.exports = {
+  registerJobSeeker,
+  loginJobSeeker,
+  applyToJob,
+  getAppliedJobs,
+};

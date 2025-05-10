@@ -3,7 +3,7 @@ const Employer = require("../models/employer.model");
 
 const createJob = async (req, res) => {
   try {
-    console.log(req.body); // Optional: for debugging
+   
     const {
       jobTitle,
       jobType,
