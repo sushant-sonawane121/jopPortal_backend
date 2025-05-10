@@ -3,7 +3,6 @@ const Employer = require("../models/employer.model");
 
 const createJob = async (req, res) => {
   try {
-   
     const {
       jobTitle,
       jobType,
@@ -81,13 +80,12 @@ const getAllJobs = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.status(200).json(jobs); // Return the filtered job data
-    
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve jobs", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve jobs", error: error.message });
   }
 };
-
-
 
 const getJobById = async (req, res) => {
   try {
@@ -125,9 +123,58 @@ const deleteJob = async (req, res) => {
   }
 };
 
+const updateJobByBodyId = async (req, res) => {
+  try {
+    const employerId = req.body._id; // From auth middleware
+    const jobId = req.body.id;
+
+    if (!jobId) {
+      return res.status(400).json({ message: "Job ID is required in request body." });
+    }
+
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+
+    // Check if the employer owns the job
+    if (job.employer.toString() !== employerId.toString()) {
+      return res.status(403).json({ message: "Unauthorized to update this job." });
+    }
+
+    // Update fields if they exist in req.body
+    const {
+      jobTitle,
+      jobType,
+      category,
+      jobDescription,
+      requirements,
+      salaryRange,
+      company,
+    } = req.body;
+
+    if (jobTitle) job.jobTitle = jobTitle;
+    if (jobType) job.jobType = jobType;
+    if (category) job.category = category;
+    if (jobDescription) job.jobDescription = jobDescription;
+    if (requirements) job.requirements = requirements;
+    if (salaryRange) job.salaryRange = salaryRange;
+    if (company) job.company = company;
+
+    const updatedJob = await job.save();
+
+    res.status(200).json({ message: "Job updated successfully.", job: updatedJob });
+  } catch (error) {
+    console.error("Update job error:", error);
+    res.status(500).json({ message: "Server error while updating job." });
+  }
+};
+
 module.exports = {
   createJob,
   getAllJobs,
   getJobById,
   deleteJob,
+  updateJobByBodyId
 };
