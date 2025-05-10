@@ -14,7 +14,7 @@ Before you start, ensure that you have the following installed on your machine:
 
 ---
 
-## Backend Setup
+## full Setup
 
 ### 1. Clone the Repository
 
