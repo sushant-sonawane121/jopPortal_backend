@@ -22,6 +22,9 @@ app.use("/api/employer", employerRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/jobseeker", jobSeekerRoutes);  // Added JobSeeker API route
 
+app.get("/",(req,res)=>{
+      res.send("Server is Running");
+})
 // Server Listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
